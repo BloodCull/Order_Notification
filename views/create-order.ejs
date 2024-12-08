@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../public/style.css" rel="stylesheet" />
+    <title>Создание заказа</title>
+  </head>
+  <body>
+    <div class="create-order-wrapper">
+      <button class="backward-button">Назад</button>
+      <h1>Создание заказа</h1>
+      <form id="create-order-form" class="create-order-form">
+        <div class="form-item">
+          <label for="order_name">Название заказа</label>
+          <input
+            id="order_name"
+            name="order_name"
+            type="text"
+            value=""
+            placeholder="Введите название заказа"
+          />
+        </div>
+
+        <div class="form-item">
+          <label for="author">Email создателя заказа</label>
+          <input
+            id="author_name"
+            name="author_name"
+            type="email"
+            value=""
+            placeholder="Введите email пользователя"
+          />
+        </div>
+
+        <div>
+          <button type="submit" class="sumbit-button">Создать</button>
+        </div>
+      </form>
+    </div>
+  </body>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("create-order-form");
+      const submitButton = document.querySelector(".sumbit-button");
+      const backwardButton = document.querySelector(".backward-button");
+
+      submitButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const data = {};
+
+        submitButton.disabled = true;
+        submitButton.innerHTML = "Loading ...";
+
+        for (let [key, value] of formData) {
+          data[key] = value;
+        }
+
+        try {
+          await fetch("http://localhost:8080/create_order", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+          window.location.replace(window.location.origin);
+        } catch (e) {
+          console.error(e);
+        } finally {
+          console.log("123");
+          submitButton.disabled = false;
+          submitButton.innerHTML = "Создать";
+        }
+      });
+
+      backwardButton.addEventListener("click", async (event) => {
+        window.location.replace(window.location.origin);
+      });
+    });
+  </script>
+</html>
