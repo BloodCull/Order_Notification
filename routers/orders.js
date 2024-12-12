@@ -11,7 +11,7 @@ const {
 router.get("/orders-page", getOrderPage);
 router.get("/orders", getOrders);
 
-router.get("/create_order", getCreateOrderPage);
-router.post("/create_order", createOrder);
+router.get("/create-order-page", getCreateOrderPage);
+router.post("/order", createOrder);
 
 module.exports = router;

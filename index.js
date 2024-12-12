@@ -1,7 +1,6 @@
 const express = require("express");
 
 const swaggerUi = require("swagger-ui-express");
-const swaggerJsDoc = require("swagger-jsdoc");
 const fs = require("fs");
 const YAML = require("yaml");
 

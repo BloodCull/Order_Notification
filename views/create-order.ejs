@@ -59,14 +59,14 @@
         }
 
         try {
-          await fetch("http://localhost:8080/create_order", {
+          await fetch("http://localhost:8080/orders", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
           });
-          window.location.replace(window.location.origin + "/orders");
+          window.location.replace(window.location.origin + "/orders-page");
         } catch (e) {
           console.error(e);
         } finally {
@@ -77,7 +77,7 @@
       });
 
       backwardButton.addEventListener("click", async (event) => {
-        window.location.replace(window.location.origin + "/orders");
+        window.location.replace(window.location.origin + "/orders-page");
       });
     });
   </script>

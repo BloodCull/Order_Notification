@@ -1,12 +1,124 @@
-openapi: '3.0.3'
+openapi: "3.0.3"
 info:
-  title: API Title
-  version: '1.0'
+  title: Orders
+  version: "1.0"
 servers:
-  - url: https://api.server.test/v1
+  - url: http://localhost:8080
+
 paths:
-  /test:
+  /orders:
     get:
+      tags:
+        - orders
+      summary: "Получение всех заказов"
+      description: "Получение всех заказов"
       responses:
-        '200':
-          description: OK
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+    post:
+      tags:
+        - orders
+      summary: "Создать новый заказ"
+      description: "Создать новый заказ"
+      parameters: []
+      requestBody:
+        description: Cоздать новый заказ
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderBody"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Wrong data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Нет имени заказа"
+                    description: "Ошибка создания заказа"
+  /orders-page:
+    get:
+      tags:
+        - pages
+      summary: "Страница для просмотра всех заказов"
+      description: "Страница для просмотра всех заказов"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /create-order-page:
+    get:
+      tags:
+        - pages
+      summary: "Страница для создания заказа"
+      description: "Страница для создания заказа"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/html:
+              schema:
+                type: string
+
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+          description: "ID заказа"
+        name:
+          type: string
+          example: "Order-Name"
+          description: "Название заказа"
+        author:
+          type: string
+          example: "email@gmail.com"
+          description: "Email-пользователя, который создал заказ"
+        status:
+          type: string
+          example: created
+          enum:
+            - created
+            - in_progress
+            - finished
+    CreateOrderBody:
+      required:
+        - name
+        - author
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Order-Name"
+          description: "Название заказа"
+        author:
+          type: string
+          example: "email@gmail.com"
+          description: "Email-пользователя, который создал заказ"
+        status:
+          type: string
+          example: created
+          enum:
+            - created
+            - in_progress
+            - finished
