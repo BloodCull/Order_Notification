@@ -2,9 +2,9 @@ const { statuses } = require("../consts/default");
 
 exports.orders = [
   {
-    id: Date.now().toString(),
+    id: "test-order",
     name: "Тестовый заказ",
     author: "bloodhomaq@gmail.com",
-    status: statuses.IS_PROGRESS,
+    status: statuses.IN_PROGRESS,
   },
 ];

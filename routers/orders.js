@@ -4,14 +4,19 @@ const router = express.Router();
 const {
   getOrderPage,
   getCreateOrderPage,
+  getChangeStatusOrderPage,
+
   getOrders,
   createOrder,
+  changeOrderStatus,
 } = require("../controller/orders");
 
 router.get("/orders-page", getOrderPage);
-router.get("/orders", getOrders);
-
 router.get("/create-order-page", getCreateOrderPage);
-router.post("/order", createOrder);
+router.get("/change-order-status-page/:id", getChangeStatusOrderPage);
+
+router.get("/orders", getOrders);
+router.post("/orders", createOrder);
+router.put("/orders/:id/status", changeOrderStatus);
 
 module.exports = router;

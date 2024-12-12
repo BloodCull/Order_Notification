@@ -49,6 +49,45 @@ paths:
                     type: string
                     example: "Нет имени заказа"
                     description: "Ошибка создания заказа"
+  /orders/{id}/status:
+    put:
+      tags:
+        - orders
+      summary: "Обновить статус существующего заказа"
+      description: "Обновить статус существующего заказа"
+      parameters:
+        - name: id
+          in: path
+          description: ID заказа
+          required: true
+          schema:
+            type: string
+            format: string
+
+      requestBody:
+        description: Обновить статус существующего заказа
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrderStatus"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Wrong data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Нет имени заказа"
+                    description: "Ошибка создания заказа"
   /orders-page:
     get:
       tags:
@@ -69,6 +108,29 @@ paths:
         - pages
       summary: "Страница для создания заказа"
       description: "Страница для создания заказа"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /change-order-status-page/{id}:
+    get:
+      tags:
+        - pages
+      parameters:
+        - name: id
+          in: path
+          description: ID заказа
+          required: true
+          schema:
+            type: string
+            format: string
+
+      summary: "Страница для изменения статуса заказа"
+      description: "Страница для изменения статуса заказа"
       responses:
         "200":
           description: Successful operation
@@ -101,6 +163,22 @@ components:
             - created
             - in_progress
             - finished
+            - canceled
+            - deleted
+    UpdateOrderStatus:
+      required:
+        - status
+      type: object
+      properties:
+        status:
+          type: string
+          example: created
+          enum:
+            - created
+            - in_progress
+            - finished
+            - canceled
+            - deleted
     CreateOrderBody:
       required:
         - name
@@ -115,10 +193,3 @@ components:
           type: string
           example: "email@gmail.com"
           description: "Email-пользователя, который создал заказ"
-        status:
-          type: string
-          example: created
-          enum:
-            - created
-            - in_progress
-            - finished

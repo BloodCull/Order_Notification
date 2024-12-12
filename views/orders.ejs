@@ -23,8 +23,18 @@
   </body>
 
   <script>
+    const orders = <%- JSON.stringify(orders) %>;
     document.addEventListener("DOMContentLoaded", () => {
       const creteNewOrderButton = document.querySelector(".create-new-order");
+      const changeStatusButtons = document.querySelectorAll(
+        ".change-status-button"
+      );
+
+      Array.from(changeStatusButtons).forEach((node, index) => {
+        node.addEventListener("click", () => {
+          window.location.replace(window.location.origin + `/change-order-status-page/${orders[index].id}`)
+        });
+      });
 
       creteNewOrderButton.addEventListener("click", () => {
         window.location.replace(window.location.origin + "/create-order-page");

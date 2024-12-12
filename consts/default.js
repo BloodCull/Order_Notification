@@ -1,7 +1,9 @@
 exports.statuses = {
   CREATED: "created",
-  IS_PROGRESS: "in_progress",
+  IN_PROGRESS: "in_progress",
   FINISHED: "finished",
+  DELETED: "deleted",
+  CANCELED: "canceled",
 };
 
 exports.emailUser = "culllalka@gmail.com";

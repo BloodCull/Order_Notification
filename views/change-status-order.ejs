@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../public/style.css" rel="stylesheet" />
+    <title>Изменение статуса заказа</title>
+  </head>
+  <body>
+    <div class="change-status-wrapper">
+        <button class="backward-button">Назад</button>
+      <form class="change-status-of-order-form">
+        <div class="form-item">
+        <label for="statuses">Выберите статус: </label>
+        <select name="status" id="statuses">
+          <% Object.entries(statuses).forEach(([key, value], index)=> { %>
+          <option value="<%= value %>" <%= order.status === value ? 'selected' : '' %>><%= key %></option>
+          <% }) %>
+        </select>
+        <div>
+
+        <button class="submit-button" type="submit">Сохранить</button>
+      </form>
+    </div>
+  </body>
+  <script>
+    const currentOrder = <%- JSON.stringify(order) %>;
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.querySelector('.change-status-of-order-form')
+        const backwardButton = document.querySelector('.backward-button')
+        const submitButton = document.querySelector('.submit-button')
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            backwardButton.disabled = true
+            submitButton.innerHTML = 'Loading...'
+            submitButton.disabled = true
+
+            const data = {}
+
+            try {
+              for(let [key, value] of new FormData(form)){
+                  data[key] =  value
+              }
+
+              await fetch(`http://localhost:8080/orders/${currentOrder.id}/status`, {
+                method: 'PUT',  
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data)
+              })
+
+              window.location.replace(window.location.origin + '/orders-page')
+
+              return 
+            } catch (e) {
+              console.log(e)
+            } finally {
+              backwardButton.disabled = false
+              submitButton.innerHTML = 'Сохранить'
+              submitButton.disabled = false
+            }
+
+            
+        })
+
+        backwardButton.addEventListener('click', () => {
+            window.location.replace(window.location.origin + '/orders-page')
+        })
+    })
+  </script>
+</html>

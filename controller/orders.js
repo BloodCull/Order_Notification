@@ -1,13 +1,15 @@
 const { statuses } = require("../consts/default");
-const { orders } = require("../models/orders");
+let { orders } = require("../models/orders");
 const { transporter, mailOptions } = require("../utils/mail");
 
 const getOrderPage = (req, res) => {
-  res.render("orders", { orders });
+  res.render("orders", {
+    orders: orders.filter((order) => order.status !== statuses.DELETED),
+  });
 };
 
 const getOrders = (req, res) => {
-  res.json(orders);
+  res.json(orders.filter((order) => order.status !== statuses.DELETED));
 };
 
 const getCreateOrderPage = (req, res) => {
@@ -53,4 +55,43 @@ const createOrder = (req, res) => {
   res.json(order);
 };
 
-module.exports = { getOrderPage, getOrders, getCreateOrderPage, createOrder };
+const getChangeStatusOrderPage = (req, res) => {
+  const { params } = req;
+  const currentOrder = orders.find((el) => el.id === params.id);
+  if (!currentOrder) {
+    res.send("Ничего не найдено");
+    return;
+  }
+  res.render("change-status-order", { order: currentOrder, statuses });
+};
+
+const changeOrderStatus = (req, res) => {
+  const { params, body } = req;
+
+  const currentOrder = orders.find((el) => el.id === params.id);
+
+  if (!currentOrder) {
+    res.status(404).json({ message: "Заказ не найден" });
+    return;
+  }
+
+  orders = orders.map((order) => {
+    if (order.id === currentOrder.id) {
+      return { ...order, status: body.status };
+    }
+
+    return { ...order };
+  });
+
+  res.json({ ...currentOrder, status: body.status });
+};
+
+module.exports = {
+  getOrderPage,
+  getCreateOrderPage,
+  getChangeStatusOrderPage,
+
+  getOrders,
+  createOrder,
+  changeOrderStatus,
+};

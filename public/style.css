@@ -56,3 +56,20 @@ ul {
   justify-content: space-between;
   align-items: center;
 }
+
+.change-status-wrapper {
+  display: flex;
+
+  gap: 32px;
+
+  flex-direction: column;
+}
+
+.change-status-of-order-form {
+  display: flex;
+  flex-direction: column;
+
+  width: fit-content;
+
+  gap: 16px;
+}

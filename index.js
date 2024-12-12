@@ -25,7 +25,7 @@ app.use(
 app.use("", orderRoutes);
 
 app.get("/", (req, res) => {
-  res.redirect("/orders");
+  res.redirect("/orders-page");
 });
 
 app.listen(port, () => {
