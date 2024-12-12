@@ -1,5 +1,7 @@
 const express = require("express");
-const nodemailer = require("nodemailer");
+
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
 
 const app = express();
 const port = 8080;
@@ -8,79 +10,28 @@ app.set("view engine", "ejs");
 app.use(express.json());
 app.use("/public", express.static(__dirname + "/public"));
 
-const emailUser = "culllalka@gmail.com";
+const orderRoutes = require("./routers/orders");
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: emailUser,
-    pass: "kcvv kmir eriy cbbr",
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      title: "Orders",
+      version: "1.0.0",
+    },
   },
-});
-
-const mailOptions = ({ toUser, subject, text, html }) => {
-  return {
-    from: emailUser,
-    to: toUser,
-    subject,
-    text,
-    html,
-  };
+  apis: ["index.js"],
 };
 
-const statuses = {
-  CREATED: "created",
-  IS_PROGRESS: "in_progress",
-  FINISHED: "finished",
-};
+app.use(
+  "/swagger",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerJsDoc(swaggerOptions))
+);
 
-const orders = [];
+app.use("", orderRoutes);
 
 app.get("/", (req, res) => {
-  res.render("orders", { orders });
-});
-
-app.get("/create_order", (req, res) => {
-  res.render("create-order");
-});
-
-app.post("/create_order", (req, res) => {
-  const { body } = req;
-
-  if (!body.order_name) {
-    res.status(404).json({
-      message: "Нет имени заказа",
-    });
-    return;
-  }
-
-  if (!body.author_name) {
-    res.status(404).json({
-      message: "Нет автора заказа",
-    });
-    return;
-  }
-  const order = {
-    id: Date.now().toString(),
-    name: body.order_name,
-    author: body.author_name,
-    status: statuses.CREATED,
-  };
-
-  orders.push(order);
-
-  transporter.sendMail(
-    mailOptions({ toUser: body.author_name }),
-    (error, info) => {
-      if (error) {
-        return console.log("Error", error);
-      }
-
-      console.log("Email send successfully:", info.response);
-    }
-  );
-
-  res.json(order);
+  res.redirect("/orders");
 });
 
 app.listen(port, () => {
