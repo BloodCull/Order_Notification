@@ -1,6 +1,6 @@
 const { statuses } = require("../consts/default");
 const { orders } = require("../models/orders");
-const { transporter, mailOptions } = require("../utils/mail/mail");
+const { transporter, mailOptions } = require("../utils/mail");
 
 const getOrderPage = (req, res) => {
   res.render("orders", { orders });

@@ -1,11 +1,12 @@
 const express = require("express");
+require("dotenv").config();
 
 const swaggerUi = require("swagger-ui-express");
 const fs = require("fs");
 const YAML = require("yaml");
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT || 8080;
 
 app.set("view engine", "ejs");
 app.use(express.json());
@@ -14,7 +15,12 @@ app.use("/public", express.static(__dirname + "/public"));
 const file = fs.readFileSync("./swagger.yaml", "utf8");
 const swaggerDocument = YAML.parse(file);
 const orderRoutes = require("./routers/orders");
-app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+const { metrics } = require("./utils/metrics");
+app.use(
+  process.env.SWAGGER_URL,
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument)
+);
 
 app.use("", orderRoutes);
 
@@ -23,5 +29,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server start on port: ${port}`);
+  metrics();
 });
