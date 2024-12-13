@@ -1,4 +1,4 @@
-const { statuses } = require("../consts/default");
+const { statuses, statusesRu } = require("../consts/default");
 let { orders } = require("../models/orders");
 const { transporter, mailOptions } = require("../utils/mail");
 
@@ -42,7 +42,11 @@ const createOrder = (req, res) => {
   orders.push(order);
 
   transporter.sendMail(
-    mailOptions({ toUser: body.author_name }),
+    mailOptions({
+      toUser: body.author_name,
+      subject: "Заказ создан",
+      text: `Заказ "${order.name}" был создан`,
+    }),
     (error, info) => {
       if (error) {
         return console.log("Error", error);
@@ -82,6 +86,23 @@ const changeOrderStatus = (req, res) => {
 
     return { ...order };
   });
+
+  transporter.sendMail(
+    mailOptions({
+      toUser: currentOrder.author,
+      subject: "Статус заказа был обновлён",
+      text: `Статус заказs "${currentOrder.name}" был изменён на "${
+        statusesRu[body.status]
+      }"`,
+    }),
+    (error, info) => {
+      if (error) {
+        return console.log("Error", error);
+      }
+
+      console.log("Email send successfully:", info.response);
+    }
+  );
 
   res.json({ ...currentOrder, status: body.status });
 };

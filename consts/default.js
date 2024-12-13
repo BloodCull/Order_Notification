@@ -6,4 +6,12 @@ exports.statuses = {
   CANCELED: "canceled",
 };
 
+exports.statusesRu = {
+  [this.statuses.CREATED]: "Создан",
+  [this.statuses.IN_PROGRESS]: "В работе",
+  [this.statuses.FINISHED]: "Завершён",
+  [this.statuses.DELETED]: "Удалён",
+  [this.statuses.CANCELED]: "Отменён",
+};
+
 exports.emailUser = "culllalka@gmail.com";
