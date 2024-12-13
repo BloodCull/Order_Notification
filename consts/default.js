@@ -13,5 +13,3 @@ exports.statusesRu = {
   [this.statuses.DELETED]: "Удалён",
   [this.statuses.CANCELED]: "Отменён",
 };
-
-exports.emailUser = "culllalka@gmail.com";
