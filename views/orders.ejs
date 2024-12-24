@@ -30,6 +30,8 @@
         ".change-status-button"
       );
 
+      console.log(window.location.origin)
+
       Array.from(changeStatusButtons).forEach((node, index) => {
         node.addEventListener("click", () => {
           window.location.replace(window.location.origin + `/change-order-status-page/${orders[index].id}`)
