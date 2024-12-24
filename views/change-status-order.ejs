@@ -43,7 +43,7 @@
                   data[key] =  value
               }
 
-              await fetch(`http://localhost:8080/orders/${currentOrder.id}/status`, {
+              await fetch(`${window.location.origin}/orders/${currentOrder.id}/status`, {
                 method: 'PUT',  
                 headers: {
                   "Content-Type": "application/json",

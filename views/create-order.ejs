@@ -59,7 +59,7 @@
         }
 
         try {
-          await fetch("http://localhost:8080/orders", {
+          await fetch(`${window.location.origin}/orders`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
