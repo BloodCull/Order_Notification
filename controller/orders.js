@@ -12,11 +12,20 @@ const getOrders = (req, res) => {
   res.json(orders.filter((order) => order.status !== statuses.DELETED));
 };
 
+const getOrderById = (req, res) => {
+  const { params } = req;
+  const finded = orders.find((item) => item.id === params.id);
+
+  if (!finded) return res.status(404).json({ message: "Заказ не найден" });
+
+  res.json(finded);
+};
+
 const getCreateOrderPage = (req, res) => {
   res.render("create-order");
 };
 
-const createOrder = (req, res) => {
+const createOrder = async (req, res) => {
   const { body } = req;
 
   if (!body.order_name) {
@@ -38,6 +47,22 @@ const createOrder = (req, res) => {
     author: body.author_name,
     status: statuses.CREATED,
   };
+
+  await fetch(`${process.env.HISTORY_APPLICATION}/history-item`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      originalResource: {
+        name: "order",
+        otherPathForGetCurrentObject: `/orders/${order.id}`,
+        method: "GET",
+        url: `${req.protocol}://${req.headers.host}`,
+      },
+      after: JSON.stringify(order),
+    }),
+  });
 
   orders.push(order);
 
@@ -69,7 +94,7 @@ const getChangeStatusOrderPage = (req, res) => {
   res.render("change-status-order", { order: currentOrder, statuses });
 };
 
-const changeOrderStatus = (req, res) => {
+const changeOrderStatus = async (req, res) => {
   const { params, body } = req;
 
   const currentOrder = orders.find((el) => el.id === params.id);
@@ -78,6 +103,24 @@ const changeOrderStatus = (req, res) => {
     res.status(404).json({ message: "Заказ не найден" });
     return;
   }
+
+  const modifiedOrder = { ...currentOrder, status: body.status };
+
+  await fetch(`${process.env.HISTORY_APPLICATION}/history-item`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      originalResource: {
+        name: "order",
+        otherPathForGetCurrentObject: `/orders/${currentOrder.id}`,
+        method: "GET",
+        url: `${req.protocol}://${req.headers.host}`,
+      },
+      after: JSON.stringify(modifiedOrder),
+    }),
+  });
 
   orders = orders.map((order) => {
     if (order.id === currentOrder.id) {
@@ -104,7 +147,7 @@ const changeOrderStatus = (req, res) => {
     }
   );
 
-  res.json({ ...currentOrder, status: body.status });
+  res.json(modifiedOrder);
 };
 
 module.exports = {
@@ -115,4 +158,5 @@ module.exports = {
   getOrders,
   createOrder,
   changeOrderStatus,
+  getOrderById,
 };
