@@ -266,11 +266,11 @@ components:
         - author
       type: object
       properties:
-        name:
+        order_name:
           type: string
           example: "Order-Name"
           description: "Название заказа"
-        author:
+        author_name:
           type: string
           example: "email@gmail.com"
           description: "Email-пользователя, который создал заказ"
