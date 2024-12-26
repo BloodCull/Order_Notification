@@ -87,7 +87,40 @@ paths:
                   message:
                     type: string
                     example: "Нет имени заказа"
-                    description: "Ошибка создания заказа"
+                    description: "Ошибка обновления статуса заказа"
+  /orders/{id}:
+    get:
+      tags:
+        - orders
+      summary: "Получить один заказ"
+      description: "Получить один заказ"
+      parameters:
+        - name: id
+          in: path
+          description: ID заказа
+          required: true
+          schema:
+            type: string
+            format: string
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderWithComments"
+        "404":
+          description: Wrong data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Нет имени заказа"
+                    description: "Ошибка получения заказа"
   /orders-page:
     get:
       tags:
@@ -165,6 +198,54 @@ components:
             - finished
             - canceled
             - deleted
+    OrderWithComments:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+          description: "ID заказа"
+        name:
+          type: string
+          example: "Order-Name"
+          description: "Название заказа"
+        author:
+          type: string
+          example: "email@gmail.com"
+          description: "Email-пользователя, который создал заказ"
+        status:
+          type: string
+          example: created
+          enum:
+            - created
+            - in_progress
+            - finished
+            - canceled
+            - deleted
+        comments:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              possitiveText:
+                type: string
+              neutralText:
+                type: string
+              negativeText:
+                type: string
+              rate:
+                type: number
+              orderId:
+                type: string
+              relatedCommnetId:
+                type: string
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
+
     UpdateOrderStatus:
       required:
         - status

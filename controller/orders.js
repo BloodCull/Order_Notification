@@ -12,13 +12,25 @@ const getOrders = (req, res) => {
   res.json(orders.filter((order) => order.status !== statuses.DELETED));
 };
 
-const getOrderById = (req, res) => {
+const getOrderById = async (req, res) => {
   const { params } = req;
   const finded = orders.find((item) => item.id === params.id);
 
   if (!finded) return res.status(404).json({ message: "Заказ не найден" });
 
-  res.json(finded);
+  const result = await fetch(
+    `${process.env.COMMENTS_APPLICATION}/order-comment?orderId=${finded.id}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  const resJSON = await result.json();
+
+  res.json({ ...finded, comments: resJSON });
 };
 
 const getCreateOrderPage = (req, res) => {
