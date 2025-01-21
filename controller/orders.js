@@ -18,19 +18,7 @@ const getOrderById = async (req, res) => {
 
   if (!finded) return res.status(404).json({ message: "Заказ не найден" });
 
-  const result = await fetch(
-    `${process.env.COMMENTS_APPLICATION}/order-comment?orderId=${finded.id}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-
-  const resJSON = await result.json();
-
-  res.json({ ...finded, comments: resJSON });
+  res.json({ ...finded });
 };
 
 const getCreateOrderPage = (req, res) => {
@@ -59,22 +47,6 @@ const createOrder = async (req, res) => {
     author: body.author_name,
     status: statuses.CREATED,
   };
-
-  await fetch(`${process.env.HISTORY_APPLICATION}/history-item`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      originalResource: {
-        name: "order",
-        otherPathForGetCurrentObject: `/orders/${order.id}`,
-        method: "GET",
-        url: `${req.protocol}://${req.headers.host}`,
-      },
-      after: JSON.stringify(order),
-    }),
-  });
 
   orders.push(order);
 
@@ -117,22 +89,6 @@ const changeOrderStatus = async (req, res) => {
   }
 
   const modifiedOrder = { ...currentOrder, status: body.status };
-
-  await fetch(`${process.env.HISTORY_APPLICATION}/history-item`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      originalResource: {
-        name: "order",
-        otherPathForGetCurrentObject: `/orders/${currentOrder.id}`,
-        method: "GET",
-        url: `${req.protocol}://${req.headers.host}`,
-      },
-      after: JSON.stringify(modifiedOrder),
-    }),
-  });
 
   orders = orders.map((order) => {
     if (order.id === currentOrder.id) {
