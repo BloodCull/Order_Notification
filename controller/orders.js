@@ -162,10 +162,57 @@ const changeOrderStatus = async (req, res) => {
   res.json(modifiedOrder);
 };
 
+const changeOrdersStatusesBulk = async (req, res) => {
+  const { body } = req;
+
+  if (!body.orders) {
+    res.status(200).json("Успешно");
+    return;
+  }
+
+  if (!body.chageStatusTo) {
+    res
+      .status(404)
+      .json("Не передан статус на который требуется изменить заказы");
+    return;
+  }
+
+  const searchedOrders = orders.filter((item) => body.orders.includes(item.id));
+
+  if (searchedOrders.length === 0) {
+    res.status(404).json("Не найдено ни одного заказа");
+    return;
+  }
+
+  searchedOrders.forEach((item) => {
+    item.status = body.chageStatusTo;
+  });
+
+  transporter.sendMail(
+    mailOptions({
+      toUser: searchedOrders[0].author,
+      subject: "Статус заказов был обновлён",
+      text: `Статус заказов "${searchedOrders
+        .map((item) => item.name)
+        .join(", ")}" были изменёны на "${statusesRu[body.chageStatusTo]}"`,
+    }),
+    (error, info) => {
+      if (error) {
+        return console.log("Error", error);
+      }
+
+      console.log("Email send successfully:", info.response);
+    }
+  );
+
+  res.json("Крутышка");
+};
+
 module.exports = {
   getOrderPage,
   getCreateOrderPage,
   getChangeStatusOrderPage,
+  changeOrdersStatusesBulk,
 
   getOrders,
   createOrder,
